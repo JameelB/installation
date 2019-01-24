@@ -55,13 +55,13 @@
   shell: oc get all -n {{ enmasse_namespace }}
   register: enmasse_resources_exist
 
-- name: "Provision EnMasse {{ enmasse_version }}"
+- name: "Provision EnMasse {{ enmasse_version }} non beta"
   shell: ansible-playbook -i {{ inventory_file }} /tmp/{{enmasse_playbook_location}}
   args:
     chdir: "../"
   when: enmasse_resources_exist.stderr == "No resources found." and  enmasse_use_beta | bool != True
 
-- name: "Provision EnMasse {{ enmasse_version }}"
+- name: "Provision EnMasse {{ enmasse_version }} beta"
   shell: ansible-playbook -i {{ inventory_file }} /tmp/enmasse-"{{ enmasse_version }}"/install_and_examples/ansible/playbooks/openshift/deploy_all.yml
   args:
     chdir: "../"
