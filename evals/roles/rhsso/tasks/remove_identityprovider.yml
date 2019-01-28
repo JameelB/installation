@@ -31,6 +31,8 @@
         warn: no
       become: yes
       register: htpasswd_identity_provider_content
+    - debug:
+        msg: "identity provider content htpasswd_identity_provider_content.stdout"
     -
       name: Add htpasswd identity provider to master config
       blockinfile:
