@@ -22,9 +22,7 @@
       register: master_config_raw
     -
       name: Read original identity provider config
-      shell: "sed -n '/identityProvider/,/masterCA/{//!p}' {{ original_identity_provider_path }}"
-      args:
-        warn: no
+      shell: "cat {{ original_identity_provider_path }}"
       become: yes
       register: original_identity_provider_config
     - 
