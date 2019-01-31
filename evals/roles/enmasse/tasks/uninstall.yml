@@ -4,6 +4,12 @@
   register: result
   changed_when: false
   failed_when: false
+  
+- name: "Delete enmasse cluster service broker"
+  shell: oc delete clusterservicebroker enmasse
+  register: output
+  when: result.rc == 0
+  failed_when: output.stderr != '' and 'not found' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
 
 - copy:
     src: patch-enmasse-csb-finalizer.json
@@ -15,12 +21,8 @@
 
 - name: "Remove finalizers from enmasse cluster service broker"
   shell: oc patch clusterservicebroker enmasse -p '{{ patch_enmasse_csb_finalizer.stdout }}'
-  
-- name: "Delete enmasse cluster service broker"
-  shell: oc delete clusterservicebroker enmasse
   register: output
-  when: result.rc == 0
-  failed_when: output.stderr != '' and 'not found' not in output.stderr and "the server doesn't have a resource type" not in output.stderr
+  failed_when: output.stderr != '' and 'not found' not in output.stderr
 
 - name: "Wait for enmasse cluster service broker to be removed"
   shell: oc get clusterservicebroker enmasse
