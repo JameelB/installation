@@ -1,6 +1,6 @@
 ---
-- include: ./delete_resource_from_template.yml
-  with_items: "{{ kube_state_metrics_templates }}"
+# - include: ./delete_resource_from_template.yml # issue with deleting service_monitor template if the CR does not exist anymore
+#   with_items: "{{ kube_state_metrics_templates }}"
 
 - name: "copy ksm template"
   copy:
