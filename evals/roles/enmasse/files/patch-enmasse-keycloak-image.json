@@ -1,0 +1,1 @@
+{"spec": {"template": {"spec": {"containers": [{"image": "redhat-sso-7/sso72-openshift:1.2", "name": "keycloak"}]}}}}

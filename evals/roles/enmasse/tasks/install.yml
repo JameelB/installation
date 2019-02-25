@@ -57,6 +57,29 @@
   failed_when: result.stdout
   changed_when: False
 
+## Patch the keycloak deployment to use 1.2 image tag instead of latest
+- copy:
+  src: patch-enmasse-keycloak-image.json
+  dest: /tmp/patch-enmasse-keycloak-image.json
+
+- name: Store contents of enmasse keycloak image patch
+  shell: cat /tmp/patch-enmasse-keycloak-image.json
+  register: enmasse_keycloak_image_patch_content
+
+- name: Patch enmasse keycloak to use 1.2 image tag
+  shell: oc patch deployment/keycloak -p '{{ enmasse_keycloak_image_patch_content.stdout }}' -n {{ enmasse_namespace }}
+  regiter: patch_kc_image
+  changed_when: patch_kc_image.rc == 0
+
+- name: "Verify patched deployments are ready"
+  shell: sleep 5; oc get pods | awk '{print $2}' | grep '0/1'
+  register: result
+  until: not result.stdout
+  retries: 50
+  delay: 10
+  failed_when: result.stdout
+  changed_when: False
+
 - name: Add labels to namespace
   shell: oc label --overwrite namespace {{ enmasse_namespace }} {{ monitoring_label_name }}={{ monitoring_label_value }} integreatly-middleware-service=true
   register: namespace_label
