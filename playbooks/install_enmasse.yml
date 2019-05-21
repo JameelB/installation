@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  gather_facts: true
+  tasks:
+    -
+      name: "Ensure postgresql tags are imported in openshift namespace for enmasse"
+      shell: oc -n openshift import-image postgresql --all
+      register: result
+      until: result.stdout
+      retries: 50
+      delay: 1
+      failed_when: not result.stdout
+      changed_when: False
+      when: enmasse
+    - 
+      name: Expose vars
+      include_vars: "../roles/enmasse/defaults/main.yml"
+    -
+      name: Install enmasse
+      include_role:
+        name: enmasse
+      tags: ['enmasse']
+      when: enmasse
